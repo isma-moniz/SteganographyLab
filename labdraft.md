@@ -38,3 +38,42 @@ If you completed the previous task, you may have noticed there exists data beyon
 At this point, you should have enough information to determine whether another file has been embedded in the carrier image. You have two ways to extract it - using sophisticated tooling such as `binwalk`, a program that can identify and optionally extract embedded files and data, or simply using `dd if=<inputfile> of=<outputfile> bs=1 skip=<beginByte>` to copy out the embedded file byte by byte. Whatever your approach is,
 - Describe your process and the resulting file.
 - Reflect on why this technique may evade casual inspection.
+
+## Task 2. - Stegomalware
+
+Hiding images inside other images is a very fun and innocent use of steganography. Unfortunately however, such benign use-cases are not always the norm. Hiding malware inside seemingly harmless digital media is a crafty way to avoid traditional signature-based and sandbox-based detection. With stegomalware, the payload remains embedded and obfuscated inside a media file and is extracted at runtime.
+
+Multiple high-profile cyber attacks and campaigns have been documented to make use of stegomalware in one way or another: Cerber (2016) concealed executable Ransomware code in JPEG images, Waterbug (2019) injected malicious DLLs into WAV audio files, among others. There are multiple ways to hide malware inside media, in ways much more sophisticated than simply appending a payload to the end of a file. In this task, you will explore LSB encoding of payloads into image files, as well as craft an extractor tool to retrieve and execute the (harmless) payload.
+
+### Task 2.1. - Embedding the Payload
+
+Inside the Attacker container, you will find a shell script with the following contents:
+
+```payload.sh
+#!/bin/bash
+echo "[demo] payload execution successful!"
+touch /tmp/stego_malware_executed
+```
+
+To hide this payload, you will use the least significant bits of the image colors. What does this mean?
+
+In image files, each pixel is the unit of color. They often can be specified using the RGB model, meaning they can be specified as pixel(Red, Green, Blue), where each of the components is a value between 0 and 255. Each pixel takes 3 bytes of memory (assuming they don't have an Alpha channel), which means each component will have 8 bits. Among these bits, the least significant bit will have the least weight on the value of the channel. For example, assuming we have:
+
+	R = 11111111 = 255
+	
+If we switch "off" the LSB we will have:
+
+	R = 11111110 = 254
+	
+If we switch "off" the MSB we will have:
+
+	R = 01111111 = 127
+
+In other words, we have a vessel for data in the form of a bit that will essentially barely change the color of the resulting pixel. 3 bits per pixel (1 LSB per channel) are ours to modify as we please. The only restriction is that the number of bits we want to embed must be smaller than the amount of pixels in the image divided by 3.
+
+Another thing to keep in consideration is to use a PNG encoded image as a carrier, since it is a lossless format, as opposed to JPEG.
+
+A great library for manipulating image files is the PIL (pillow) python library. You will find in the `labsetup` folder a python program `embed.py` that toggles all bits of an image to 0. Run the program with on any image of your choosing.
+- Can you see any difference? Why?
+- Make the necessary additions and modifications to the code in order to embed the payload into it.
+- TODO add more
