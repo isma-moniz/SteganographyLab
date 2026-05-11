@@ -16,6 +16,7 @@ def embed_payload(input_image, payload_file, output_image):
         channels = [r,g,b]
 
         for i in range(3):
+            # Toggle off LSB
             channels[i] = channels[i] & 0xFE
 
         new_pixels.append(tuple(channels))
