@@ -12,3 +12,9 @@ Source: https://www.flickr.com/photos/61021753@N02/8188131475
 Author: BioDivLibrary
 Title: n469_w1150
 License: Public Domain Mark 1.0
+
+## duck.jpg
+Source: https://www.publicdomainpictures.net/en/view-image.php?image=99261&picture=mallard
+Author: Petr Kratochvil
+Title: Mallard
+License: CC0 Public Domain
