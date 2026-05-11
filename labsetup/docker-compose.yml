@@ -1,0 +1,10 @@
+services:
+  attacker:
+    build: ./attacker
+    container-name: attacker
+
+  victim:
+    build: ./victim
+    container-name: victim
+    depends-on:
+      - attacker
