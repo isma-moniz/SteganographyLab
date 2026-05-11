@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install -y \
 	exiftool \
 	file \
 	xxd \
+	bsdmainutils \
+	less \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN pip install pillow
