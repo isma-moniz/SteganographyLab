@@ -1,5 +1,17 @@
 # Steganography Lab
 
+## Notes on container usage
+
+This lab can easily be performed on Linux systems without many dependencies. However, we advise (especially for task 2) the usage of our containers. You will find in the lab a `docker-compose.yml` in the labsetup folder. This file, upon executing `docker-compose up -d` (you may have to use sudo), will spin up two containers, an attacker and a victim. 
+
+Each of these is appropriately named for the task 2 instructions, however you can use either of them, or even your own machine, to perform task 1, as they come with the necessary utilities.
+
+You will find that you need to transfer files between your computer and the containers, for image viewing, text editing, or other purposes. For your convenience, we set up a `volumes` folder. This folder is shared between both containers and the host.
+
+You can easily get a shell in any of the containers by using `docker exec -it <container_name> /bin/bash>.
+
+Once you are done with the containers, running `docker-compose down --rmi all` will destroy them and their images.
+
 ## Task 1
 
 One of the more common and easier to understand uses of steganography is to hide images within other images.
@@ -7,7 +19,7 @@ By closely interacting with a steganographed image and inspecting it you will co
 
 ### Task 1.1 - Image viewers are not forensic tools
 
-Take a look at the `challenge.jpg` picture, with any image viewer of your choice. You should see an old scientific magazine's drawing of a gnu. This doesn't really tell us anything. Even if there was a binary payload of a virus in here, the image viewer would
+Take a look at the `challenge.jpg` picture, available in the volumes folder, with any image viewer of your choice. You should see an old scientific magazine's drawing of a gnu. This doesn't really tell us anything. Even if there was a binary payload of a virus in here, the image viewer would
 not show us that.
 
 A good surface level inspection tool for many sorts of binary media files (images, videos, PDFs, audio,...) is the `exiftool` command line tool.
@@ -25,7 +37,7 @@ Image files are simply binary files, with specific encodings that tell programs 
 
 Independently of what encoding the image file has, it will most certainly contain its own convention for a "header", i.e. a set of specific bytes that signify what encoding the image has, as well as possibly other attributes such as width and height. It is also important to signify when the image data is over. In the case of JPEG, a EOI (end-of-image) byte sequence can be found at the end of the image data. Such identifying byte sequences are commonly called magic bytes or file signatures.
 
-- Using a hex inspection tool, such as `hexdump` or `xxd` try to find the byte sequences characteristic of JFIF files in the binary contents.
+- Using a hex inspection tool, such as `hexdump` or `xxd` try to find the byte sequences characteristic of JFIF files in the binary contents. It might be useful to pipe the output of the program to a pager. You can do that by appending ` | less` to the command. Also remember strings or byte sequences may be broken up in your terminal...
 - Some hex visualizers also print ASCII strings. Look for the JFIF string in the file.
 - Try to find the EOI indicator. Is there any data past it?
 
@@ -37,8 +49,9 @@ If you completed the previous task, you may have noticed there exists data beyon
 
 At this point, you should have enough information to determine whether another file has been embedded in the carrier image. You have two ways to extract it - using sophisticated tooling such as `binwalk`, a program that can identify and optionally extract embedded files and data, or simply using `dd if=<inputfile> of=<outputfile> bs=1 skip=<beginByte>` to copy out the embedded file byte by byte. Whatever your approach is,
 - Describe your process and the resulting file.
-- Reflect on why this technique may evade casual inspection.
+- Reflect on why this simple file concatenation technique may evade casual inspection.
 
+Note: `binwalk` is a slightly heavier program than your average util, so we decided to not package it with the containers. You can however quickly spin up a containerized `binwalk` with these instructions: https://github.com/ReFirmLabs/binwalk/wiki/Building-A-Binwalk-Docker-Image.
 ## Task 2. - Stegomalware
 
 Hiding images inside other images is a very fun and innocent use of steganography. Unfortunately however, such benign use-cases are not always the norm. Hiding malware inside seemingly harmless digital media is a crafty way to avoid traditional signature-based and sandbox-based detection. With stegomalware, the payload remains embedded and obfuscated inside a media file and is extracted at runtime.
@@ -86,7 +99,7 @@ In a real world context, the payload would often be obfuscated in some other man
 
 ### Task 2.2. - Delivering the payload
 
-You now have an apparently harmless image of a duck with a demonstration payload embedded in its least significant bits (LSBs). In order to simulate a more realistic scenario, the image should be delivered to the victim container through a seemingly benign channel. A common and straightforward way to achieve this is to serve the image over HTTP.
+You should now have an apparently harmless image of a duck with a demonstration payload embedded in its least significant bits (LSBs). In order to simulate a more realistic scenario, the image should be delivered to the victim container through a seemingly benign channel. A common and straightforward way to achieve this is to serve the image over HTTP.
 
 In real-world attacks, adversaries often rely on social engineering to convince users to download malicious media files. In other cases, an already compromised system may retrieve additional payloads from a remote server in order to reduce the likelihood of detection and avoid shipping all malicious functionality at once.
 

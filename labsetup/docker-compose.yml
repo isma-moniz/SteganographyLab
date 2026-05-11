@@ -1,0 +1,16 @@
+services:
+  attacker:
+    build: ./attacker
+    container_name: attacker
+    command: bash -c "tail -f /dev/null"
+    volumes:
+      - ./volumes:/app/volumes
+
+  victim:
+    build: ./victim
+    container_name: victim
+    depends_on:
+      - attacker
+    command: bash -c "tail -f /dev/null"
+    volumes:
+      - ./volumes:/app/volumes
