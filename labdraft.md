@@ -73,7 +73,34 @@ In other words, we have a vessel for data in the form of a bit that will essenti
 
 Another thing to keep in consideration is to use a PNG encoded image as a carrier, since it is a lossless format, as opposed to JPEG.
 
-A great library for manipulating image files is the PIL (pillow) python library. You will find in the `labsetup` folder a python program `embed.py` that toggles all bits of an image to 0. Run the program with on any image of your choosing.
-- Can you see any difference? Why?
+A great library for manipulating image files is the PIL (pillow) python library. You will find in the `labsetup` folder a python program `embed.py` that toggles all LSBs of an image to 0. Run the program with no payload (just input some random gibberish in that field) on the `duck.png` image. Make sure to output it to a .png as well.
+- Can you see any difference between the original image and the resulting image? Why?
 - Make the necessary additions and modifications to the code in order to embed the payload into it.
-- TODO add more
+
+If you're having trouble, make sure to:
+- Open the payload file in "rb" mode.
+- Convert the payload bytes to a list of bits.
+- Embed each of them sequentially into an open "slot" in the image.
+
+In a real world context, the payload would often be obfuscated in some other manner. It could be encrypted, compressed, or a combination of both. A good extra challenge is to experiment with compressing the payload with gzip before embedding it. You will of course have to decompress it upon recovering it as well, with the extra advantage of it not being so obvious to detect.
+
+### Task 2.2. - Delivering the payload
+
+You now have an apparently harmless image of a duck with a demonstration payload embedded in its least significant bits (LSBs). In order to simulate a more realistic scenario, the image should be delivered to the victim container through a seemingly benign channel. A common and straightforward way to achieve this is to serve the image over HTTP.
+
+In real-world attacks, adversaries often rely on social engineering to convince users to download malicious media files. In other cases, an already compromised system may retrieve additional payloads from a remote server in order to reduce the likelihood of detection and avoid shipping all malicious functionality at once.
+
+In this task, the attacker container will host the steganographic image, while the victim container will download and process it using a simple extractor program.
+
+Hosting the image is easy enough. Simply move it into a folder of your choosing and start a python HTTP server.
+
+```
+mkdir -p website && mv infected.png website/.
+python -m http.server 8000
+```
+
+In the victim container you will find an ```imv_fake.sh``` script. It mimics the command line utility `imv` for image viewing, but instead downloads the malicious image on the provided link, calls `extractor.py` on it and runs `payload.sh`.
+
+- Make the necessary modifications to `extractor.py`in order to have it extract the hidden payload to the destination bash executable.
+- Run `imv_fake.sh` with the remote HTTP link and verify if you managed to execute the malicious payload.
+- Can you describe plausible real-world scenarios in which similar extractors could realistically execute automatically?
