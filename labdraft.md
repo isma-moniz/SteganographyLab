@@ -1,5 +1,11 @@
 # Steganography Lab
 
+## Overview
+
+Steganography is a very old concept. It refers to the practice of representing information within another message or physical object, in a covert manner. In this lab, we will explore digital steganography, which applies this principle to all sorts of media files. You will learn both how to embed and to detect embedded content in pieces of digital media such as images. We will explore multiple ways to do this, from simple concatenation to clever modification of the image's color channels.
+
+From a cybersecurity standpoint, steganography is an example of security through obscurity. We think it is important to put stegomalware in the spotlight, as ==Several attacks have made use of steganographed media as a way to hide payloads to avoid detection or even retrieve parts of the malware later.== For this reason, a portion of the lab also touches on the subject of stegomalware, and you will learn how to make both an embedding and a retrieval of a demonstrative malicious payload inside a carrier image. This section will demonstrate how even benign looking channels and media can be made to carry malware.
+
 ## Notes on container usage
 
 This lab can easily be performed on Linux systems without many dependencies. However, we advise (especially for task 2) the usage of our containers. You will find in the lab a `docker-compose.yml` in the labsetup folder. This file, upon executing `docker-compose up -d` (you may have to use sudo), will spin up two containers, an attacker and a victim. 
