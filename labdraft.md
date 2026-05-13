@@ -82,7 +82,7 @@ If we switch "off" the MSB we will have:
 
 	R = 01111111 = 127
 
-In other words, we have a vessel for data in the form of a bit that will essentially barely change the color of the resulting pixel. 3 bits per pixel (1 LSB per channel) are ours to modify as we please. The only restriction is that the number of bits we want to embed must be smaller than the amount of pixels in the image divided by 3.
+In other words, we have a vessel for data in the form of a bit that will essentially barely change the color of the resulting pixel. 3 bits per pixel (1 LSB per channel) are ours to modify as we please. The only restriction is that the number of bits we want to embed must be smaller than the amount of pixels in the image multiplied by 3.
 
 Another thing to keep in consideration is to use a PNG encoded image as a carrier, since it is a lossless format, as opposed to JPEG.
 
@@ -117,3 +117,14 @@ In the victim container you will find an ```imv_fake.sh``` script. It mimics the
 - Make the necessary modifications to `extractor.py`in order to have it extract the hidden payload to the destination bash executable.
 - Run `imv_fake.sh` with the remote HTTP link and verify if you managed to execute the malicious payload.
 - Can you describe plausible real-world scenarios in which similar extractors could realistically execute automatically?
+
+## Task 3 - Steganalysis
+
+It is often difficult to identify steganographic alterations to files, as they are frequently encrypted or compressed, we must therefore rely on more sophisticated methods of analysis to stand a better chance at detecting malicious changes. The field of steganalysis fills this need.
+
+In this section we will explore some steganalysis techniques that attempt to identify artificial changes to file contents by searching for discrepancies in noise patterns and file format behavior.
+
+### Task 3.1 - Noise-Floor Consistency Analysis
+
+
+### Task 3.2 - Format Analysis
