@@ -146,3 +146,8 @@ Is the variance difference significative? Try applying the same process to diffe
 There are several factors that can influence our measurements like textured regions, natural image variability, payload size, and denoising method. It is therefore best to employ a higher variety of measurements when trying to identify steganographical embeddings such as Entropy or Neighboor Correlation.
 
 ### Task 3.2 - Format Analysis
+
+In Task 1 we identified an image hidden after an EOI flag in the original jpeg. In doing so we engaged in one of the several branches of Format Analysis, a set of techniques aimed at identifying steganographical additions to files by analysing their file structure, metadata, encoding rules, etc.
+
+In this section we will focus on Metadata Analysis, which works by extracting the metadata from the possibly compromised file and trying to find discrepancies that sugest the file has been altered.
+
