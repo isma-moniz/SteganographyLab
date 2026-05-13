@@ -126,5 +126,23 @@ In this section we will explore some steganalysis techniques that attempt to ide
 
 ### Task 3.1 - Noise-Floor Consistency Analysis
 
+Most input devices produce some degree of background noise that follows patterns characteristic of the device. The addition of steganographically embedded code disturbs these patterns, leading to pseudo-random regions in the code.
+
+Noise-Floor Consistency Analysis is a set of techniques aimed at identifying these disturbances. To use it, we must first obtain the noise map of an image in the following steps. It is recommended you use the cv2 library in python for this exercise.
+
+- Apply the embed.py file obtained in Task 2.1 to an image in order to steganographically hide a payload inside of it.
+- Apply a GaussianBlur or MedianBlur to the clean and embeded image in order to obtain a denoised estimate of them.
+- Find the absolute difference between the original and denoised images, called the residuals.
+
+By doing this we are effectively making a map of how much each value differs from the ones arround it, aproximating the noise produced in that pixel. The result we obtain differs depending on the denoising method used and while the sugested blurs aren't the most sophisticated, they can get a suficiently good result for this exercise.
+
+We can now start analysing the noise-floor. There are several methods we can use but in this exercise we will focus on the analysis of the variance in the noise values. 
+
+- Find the variance value of the residual in both the clean and embeded image.
+- Apply the same process to different images and verify in which ones the variance difference is significative and which external factors could be impacting variance.
+
+Is the variance difference significative? Try applying the same process to different images or using different measurements such as Entropy and Neighboor Correlation.
+
+There are several factors that can influence our measurements like textured regions, natural image variability, payload size, and denoising method. It is therefore best to employ a higher variety of measurements when trying to identify steganographical embeddings such as Entropy or Neighboor Correlation.
 
 ### Task 3.2 - Format Analysis
