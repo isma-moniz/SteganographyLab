@@ -151,3 +151,23 @@ In Task 1 we identified an image hidden after an EOI flag in the original jpeg. 
 
 In this section we will focus on Metadata Analysis, which works by extracting the metadata from the possibly compromised file and trying to find discrepancies that sugest the file has been altered.
 
+There are two images in the volumes directory labeled "metadata1.jpg" and "metadata2.jpg". You should create a python script to obtain the following metadata flags from each image using pillow:
+ - Software
+ - DateTimeOriginal
+ - DateTime
+ - Make
+ - Model
+ - Image Dimensions
+ - Compression Information
+
+Although not always relevant, present, or indicative of steganographical activity, there are certain ways in which these tags can indicate that the picture has been altered, which should alert you against the possible hidden content:
+
+- Software - Can indicate the usage of editing software in allegedly unaltered images.
+- DateTimeOriginal/DateTime - Might directly show the file has been edited if there is a discrepancy between the dates.
+- Make/Model - Missing values can indicate synthetic generation, editing or general metadata stripping while impossible combination should also tip the analyst off to suspiious activity.
+- Image Dimensions - Unexpected dimensions may indicate manipulation.
+- Compression Information - Embeddings often require recompression, which might be shown in this field. Unusually low quality can also be an indication of manipulation.
+
+There are, of course, countless other tags that could help you determine the possible of hidden files, as well as more general signs of editing such as the absence of tags that should have been present.
+
+Finnaly, we ask you to try to determine which, if any, of the images' metadata display signs of steganography embeding, justifying your answer with their tag contents.
