@@ -171,3 +171,9 @@ Although not always relevant, present, or indicative of steganographical activit
 There are, of course, countless other tags that could help you determine the possible of hidden files, as well as more general signs of editing such as the absence of tags that should have been present.
 
 Finnaly, we ask you to try to determine which, if any, of the images' metadata display signs of steganography embeding, justifying your answer with their tag contents.
+
+## Further Reasearch
+
+There are many techniques and tools that could not be fully explored in the scope of this lab. If you seek to expand your knowledge beyond it, we suggest you look into Content Disarm and Reconstruction (CDR) technique. 
+
+CDR works by essentially stripping files of any data that is not strictly necessary for their functioning, thus removing most hiding spots of Steganographic embeddings. They can do this by stripping metadata, recompressing images, rewriting file structures, etc.
