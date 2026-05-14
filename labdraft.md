@@ -150,7 +150,7 @@ In Task 1 we identified an image hidden after an EOI flag in the original jpeg. 
 
 In this section we will focus on Metadata Analysis, which works by extracting the metadata from the possibly compromised file and trying to find discrepancies that suggest the file has been altered.
 
-There are two images in the volumes directory labeled "metadata1.jpg" and "metadata2.jpg". You should create a Python script to obtain the following metadata flags from each image using Pillow:
+There are two images in the volumes directory labeled "metadata1.jpg" and "metadata2.jpg". You should create a Python script to obtain the following metadata flags from each image using Pillow, if they exist:
  - Software
  - DateTimeOriginal
  - DateTime
