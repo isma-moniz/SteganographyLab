@@ -119,8 +119,7 @@ In the victim container you will find an ```imv_fake.sh``` script. It mimics the
 - Can you describe plausible real-world scenarios in which similar extractors could realistically execute automatically?
 
 ## Task 3 - Steganalysis
-
-It is often difficult to identify steganographic alterations to files, as they are frequently encrypted or compressed, we must therefore rely on more sophisticated methods of analysis to stand a better chance at detecting malicious changes. The field of steganalysis fills this need.
+It is often difficult to identify steganographic alterations to files, as they are frequently encrypted or compressed; we must, therefore, rely on more sophisticated methods of analysis to stand a better chance at detecting malicious changes. The field of steganalysis fills this need.
 
 In this section we will explore some steganalysis techniques that attempt to identify artificial changes to file contents by searching for discrepancies in noise patterns and file format behavior.
 
@@ -128,52 +127,52 @@ In this section we will explore some steganalysis techniques that attempt to ide
 
 Most input devices produce some degree of background noise that follows patterns characteristic of the device. The addition of steganographically embedded code disturbs these patterns, leading to pseudo-random regions in the code.
 
-Noise-Floor Consistency Analysis is a set of techniques aimed at identifying these disturbances. To use it, we must first obtain the noise map of an image in the following steps. It is recommended you use the cv2 library in python for this exercise.
+Noise-Floor Consistency Analysis is a set of techniques aimed at identifying these disturbances. To use it, we must first obtain the noise map of an image in the following steps. It is recommended you use the cv2 library in Python for this exercise.
 
 - Apply the embed.py file obtained in Task 2.1 to an image in order to steganographically hide a payload inside of it.
-- Apply a GaussianBlur or MedianBlur to the clean and embeded image in order to obtain a denoised estimate of them.
+- Apply a GaussianBlur or MedianBlur to the clean and embedded image in order to obtain a denoised estimate of them.
 - Find the absolute difference between the original and denoised images, called the residuals.
 
-By doing this we are effectively making a map of how much each value differs from the ones arround it, aproximating the noise produced in that pixel. The result we obtain differs depending on the denoising method used and while the sugested blurs aren't the most sophisticated, they can get a suficiently good result for this exercise.
+By doing this, we are effectively making a map of how much each value differs from the ones around it, approximating the noise produced in that pixel. The result we obtain differs depending on the denoising method used, and while the suggested blurs aren't the most sophisticated, they can get a sufficiently good result for this exercise.
 
-We can now start analysing the noise-floor. There are several methods we can use but in this exercise we will focus on the analysis of the variance in the noise values. 
+We can now start analyzing the noise-floor. There are several methods we can use, but in this exercise we will focus on the analysis of the variance in the noise values. 
 
-- Find the variance value of the residual in both the clean and embeded image.
-- Apply the same process to different images and verify in which ones the variance difference is significative and which external factors could be impacting variance.
+- Find the variance value of the residual in both the clean and embedded image.
+- Apply the same process to different images and verify in which ones the variance difference is significant and which external factors could be impacting variance.
 
-Is the variance difference significative? Try applying the same process to different images or using different measurements such as Entropy and Neighboor Correlation.
+Is the variance difference significant? Try applying the same process to different images or using different measurements such as Entropy and Neighboor Correlation.
 
-There are several factors that can influence our measurements like textured regions, natural image variability, payload size, and denoising method. It is therefore best to employ a higher variety of measurements when trying to identify steganographical embeddings such as Entropy or Neighboor Correlation.
+There are several factors that can influence our measurements like textured regions, natural image variability, payload size, and denoising method. It is therefore best to employ a higher variety of measurements when trying to identify steganographical embeddings, such as Entropy or Neighboor Correlation.
 
 ### Task 3.2 - Format Analysis
 
-In Task 1 we identified an image hidden after an EOI flag in the original jpeg. In doing so we engaged in one of the several branches of Format Analysis, a set of techniques aimed at identifying steganographical additions to files by analysing their file structure, metadata, encoding rules, etc.
+In Task 1 we identified an image hidden after an EOI flag in the original jpeg. In doing so, we engaged in one of the several branches of Format Analysis, a set of techniques aimed at identifying steganographical additions to files by analyzing their file structure, metadata, encoding rules, etc.
 
-In this section we will focus on Metadata Analysis, which works by extracting the metadata from the possibly compromised file and trying to find discrepancies that sugest the file has been altered.
+In this section we will focus on Metadata Analysis, which works by extracting the metadata from the possibly compromised file and trying to find discrepancies that suggest the file has been altered.
 
-There are two images in the volumes directory labeled "metadata1.jpg" and "metadata2.jpg". You should create a python script to obtain the following metadata flags from each image using pillow:
- - Software
- - DateTimeOriginal
- - DateTime
- - Make
- - Model
- - Image Dimensions
- - Compression Information
+There are two images in the volumes directory labeled "metadata1.jpg" and "metadata2.jpg". You should create a Python script to obtain the following metadata flags from each image using Pillow:
+ - Software
+ - DateTimeOriginal
+ - DateTime
+ - Make
+ - Model
+ - Image Dimensions
+ - Compression Information
 
-Although not always relevant, present, or indicative of steganographical activity, there are certain ways in which these tags can indicate that the picture has been altered, which should alert you against the possible hidden content:
+Although not always relevant, present, or indicative of steganographical activity, there are certain ways in which these tags can indicate that the picture has been altered, which should alert you to the possible hidden content:
 
 - Software - Can indicate the usage of editing software in allegedly unaltered images.
 - DateTimeOriginal/DateTime - Might directly show the file has been edited if there is a discrepancy between the dates.
-- Make/Model - Missing values can indicate synthetic generation, editing or general metadata stripping while impossible combination should also tip the analyst off to suspiious activity.
+- Make/Model - Missing values can indicate synthetic generation, editing, or general metadata stripping, while impossible combinations should also tip the analyst off to suspicious activity.
 - Image Dimensions - Unexpected dimensions may indicate manipulation.
 - Compression Information - Embeddings often require recompression, which might be shown in this field. Unusually low quality can also be an indication of manipulation.
 
-There are, of course, countless other tags that could help you determine the possible of hidden files, as well as more general signs of editing such as the absence of tags that should have been present.
+There are, of course, countless other tags that could help you determine the possibility of hidden files, as well as more general signs of editing such as the absence of tags that should have been present.
 
-Finnaly, we ask you to try to determine which, if any, of the images' metadata display signs of steganography embeding, justifying your answer with their tag contents.
+Finally, we ask you to try to determine which, if any, of the images' metadata display signs of steganography embedding, justifying your answer with their tag contents.
 
-## Further Reasearch
+## Further Research
 
-There are many techniques and tools that could not be fully explored in the scope of this lab. If you seek to expand your knowledge beyond it, we suggest you look into Content Disarm and Reconstruction (CDR) technique. 
+There are many techniques and tools that could not be fully explored in the scope of this lab. If you seek to expand your knowledge beyond it, we suggest you look into the Content Disarm and Reconstruction (CDR) technique. 
 
 CDR works by essentially stripping files of any data that is not strictly necessary for their functioning, thus removing most hiding spots of Steganographic embeddings. They can do this by stripping metadata, recompressing images, rewriting file structures, etc.
