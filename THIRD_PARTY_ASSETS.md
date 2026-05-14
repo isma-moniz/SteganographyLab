@@ -18,3 +18,15 @@ Source: https://www.publicdomainpictures.net/en/view-image.php?image=99261&pictu
 Author: Petr Kratochvil
 Title: Mallard
 License: CC0 Public Domain
+
+## metadata1.jpg
+Source: https://www.publicdomainpictures.net/en/view-image.php?image=9719&picture=full-moon
+Author: Petr Kratochvil
+Title: Full Moon
+License: CC0 Public Domain
+
+## metadata2.jpg
+Source: https://www.publicdomainpictures.net/en/view-image.php?image=47&picture=coffee-beans
+Author: Petr Kratochvil
+Title: Coffee Beans
+License: CC0 Public Domain
