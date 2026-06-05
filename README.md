@@ -1,5 +1,7 @@
 # Steganography Lab
 
+Welcome! The practical and theoretical pdf files contain the walkthrough and theoretical background of this lab.
+
 File structure:
 
 .
