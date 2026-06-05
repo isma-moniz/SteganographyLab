@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 	less \
 	&& rm -rf /var/lib/apt/lists/*
 
-RUN pip install pillow
+RUN pip install pillow opencv-python-headless numpy scipy
 
 COPY extractor.py .
 COPY imv_fake.sh .
