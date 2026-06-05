@@ -6,35 +6,65 @@ File structure:
 
 .
 ├── assets
+
 │   ├── challenge.jpg
+
 │   ├── duck.jpg
+
 │   ├── duck.png
+
 │   ├── gnu.jpg
+
 │   ├── metadata1.jpg
+
 │   ├── metadata2.jpg
+
 │   ├── penguins.jpg
+
 │   └── penguins.png
+
 ├── labsetup
+
 │   ├── attacker
+
 │   │   ├── Dockerfile
+
 │   │   ├── duck.png
+
 │   │   ├── embed.py
+
 │   │   └── payload.sh
+
 │   ├── docker-compose.yml
+
 │   ├── solutions
+
 │   │   ├── analysis.py
+
 │   │   ├── embed.py
+
 │   │   └── extractor.py
+
 │   ├── victim
+
 │   │   ├── Dockerfile
+
 │   │   ├── extractor.py
+
 │   │   └── imv_fake.sh
+
 │   └── volumes
+
 │       ├── challenge.jpg
+
 │       ├── metadata1.jpg
+
 │       └── metadata2.jpg
+
 ├── README.md
+
 ├── SSI Project Proposal - G1 - Steganography Lab.pdf
+
 └── THIRD_PARTY_ASSETS.md
 
 The solutions directory contains the 3 main python scripts' solution
